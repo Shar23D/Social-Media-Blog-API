@@ -31,14 +31,14 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.get("example-endpoint", this::exampleHandler);
-        app.post("register", this::postAccountHandler);
-        app.post("login", this::postLoginHandler);
-        app.post("messages", this::postMessageHandler);
-        app.get("messages", this::getMessagesHandler);
-        app.get("messages/{message_id}", this::getAMessageHandler);
-        app.delete("messages/{message_id}", this::deleteAMessageHandler);
-        app.patch("messages/{message_id}", this::patchMessageHandler);
-        app.get("accounts/{account_id}/messages", this::getAccountMessagesHandler);
+        app.post("/register", this::postAccountHandler);
+        app.post("/login", this::postLoginHandler);
+        app.post("/messages", this::postMessageHandler);
+        app.get("/messages", this::getAllMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessageByIdHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageByIdHandler);
+        app.patch("/messages/{message_id}", this::patchMessageHandler);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesByAccountIdHandler);
         app.start(8080);
     }
 
@@ -54,7 +54,7 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
-        if (addedAccount != null && addedAccount.password.length() >= 4) {
+        if (addedAccount != null) {
             context.json(mapper.writeValueAsString(addedAccount));
         }
         else {
@@ -78,7 +78,7 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
         Message addedMessage = messageService.addMessage(message);
-        if (addedMessage != null && addedMessage.message_text.length() <= 255) {
+        if (addedMessage != null) {
             context.json(mapper.writeValueAsString(addedMessage));
         }
         else {
@@ -86,17 +86,42 @@ public class SocialMediaController {
         }
     }
 
-    private void getMessagesHandler(Context context) {
+    private void getAllMessagesHandler(Context context) {
         List<Message> messages = messageService.getAllMessages();
         context.json(messages);
     }
 
-    private void getAMessageHandler(Context context, int message_id) {
+    private void getMessageByIdHandler(Context context, int message_id) {
         context.pathParam("message_id");
-        Message message = messageService.GetAMessageById();
-        context.json(message);
+        // Message message = messageService.GetMessageById();
+        // context.json(message);
     }
     
+    private void deleteMessageByIdHandler(Context context) {
+        context.pathParam("message_id");
+        // Message message = messageService.DeleteMessageById();
+        // context.json(message);
+    }
+
+    private void patchMessageHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(context.body(), Message.class);
+        context.pathParam("message_id");
+        Message updatedMessage = messageService.updateMessage(message);
+        if (updatedMessage != null) {
+            context.json(mapper.writeValueAsString(updatedMessage));
+        }
+        else {
+            context.status(400);
+        }
+    }
+
+    private void getAllMessagesByAcountIdHandler(Context context) {
+        context.pathParam("account_id");
+        // List<Message> messages = messageService.getAllMessages();
+        // context.json(messages);
+    }
+
 
 
 
