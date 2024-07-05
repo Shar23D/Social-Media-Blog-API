@@ -123,7 +123,7 @@ public class SocialMediaController {
 
     private void getAllMessagesByAcountIdHandler(Context context) {
         int accountId = Integer.parseInt(Objects.requireNonNull(context.pathParam("account_id")));
-        List<Message> messages = messageService.getAllMessages(accountId);
+        List<Message> messages = messageService.getAllMessagesbyAccountId(accountId);
         context.json(messages);
     }
 

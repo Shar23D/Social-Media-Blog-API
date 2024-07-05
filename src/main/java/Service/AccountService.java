@@ -16,7 +16,7 @@ public class AccountService {
     }
 
     public Account addAccount(Account account) {
-        if (accountDAO.getAccountbyId(account.getAccount_id() != null)) {
+        if (accountDAO.getAccountbyId(account.getAccount_id())) {
             return null;
         }
         else if ((account.getUsername() != null) && (account.getPassword().length() >= 4)) {
