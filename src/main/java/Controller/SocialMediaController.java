@@ -58,8 +58,9 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
-        if (addedAccount != null) {
+        if (addedAccount != null && (addedAccount.getPassword().length() >= 4)) {
             context.json(mapper.writeValueAsString(addedAccount));
+            context.status(200);
         }
         else {
             context.status(400);
@@ -70,8 +71,9 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
         Account login = accountService.verifyLogin(account);
-        if (login != null) {
+        if (login != null && (addedAccount.getPassword().length() >= 4)) {
             context.json(mapper.writeValueAsString(login));
+            context.status(200);
         }
         else {
             context.status(401);
@@ -80,11 +82,12 @@ public class SocialMediaController {
 
     private void addMessageHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        Message message = mapper.readValue(context.body(), Message.class);
-        Account account = accountService.getAccountId(message.getPosted_by());
+        Message message = mapper.readValue(context.body(),Message.class);
+        Account account = accountService.getAccountById(message.getPosted_by());
         Message addedMessage = messageService.addMessage(account.getAccount_id(), message.getMessage_text());
-        if (addedMessage != null && account != null) {
+        if (addedMessage != null && account != null && (addedMessage.getMessage_text().length() < 255)) {
             context.json(mapper.writeValueAsString(addedMessage));
+            context.status(200);
         }
         else {
             context.status(400);
@@ -94,18 +97,21 @@ public class SocialMediaController {
     private void getAllMessagesHandler(Context context) {
         List<Message> messages = messageService.getAllMessages();
         context.json(messages);
+        context.status(200);
     }
 
     private void getMessageByIdHandler(Context context) {
         int messageId = Integer.parseInt(Objects.requireNonNull(context.pathParam("message_id")));
         Message message = messageService.GetMessageById(messageId);
         context.json(message);
+        context.status(200);
     }
     
     private void deleteMessageByIdHandler(Context context) {
         int messageId = Integer.parseInt(Objects.requireNonNull(context.pathParam("message_id")));
         Message message = messageService.deleteMessageById(messageId);
         context.json(message);
+        context.status(200);
     }
 
     private void updateMessageHandler(Context context) throws JsonProcessingException {
@@ -113,8 +119,9 @@ public class SocialMediaController {
         Message message = mapper.readValue(context.body(), Message.class);
         int messageId = Integer.parseInt(Objects.requireNonNull(context.pathParam("message_id")));
         Message updatedMessage = messageService.updateMessage(messageId, message);
-        if (updatedMessage != null) {
+        if (updatedMessage != null && (updatedMessage.getMessage_text().length() < 255)) {
             context.json(mapper.writeValueAsString(updatedMessage));
+            context.status(200);
         }
         else {
             context.status(400);
@@ -123,8 +130,13 @@ public class SocialMediaController {
 
     private void getAllMessagesByAcountIdHandler(Context context) {
         int accountId = Integer.parseInt(Objects.requireNonNull(context.pathParam("account_id")));
-        List<Message> messages = messageService.getAllMessagesbyAccountId(accountId);
-        context.json(messages);
+        Account account = accountService.getAccountById(accountId);
+        if (account != null) {
+            List<Message> messages = messageService.getAllMessagesbyAccountId(accountId);
+            context.json(messages);
+            context.status(200);
+
+        }
     }
 
 

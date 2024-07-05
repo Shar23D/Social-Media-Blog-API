@@ -3,7 +3,6 @@ package Service;
 import Model.Account;
 import DAO.AccountDAO;
 
-
 public class AccountService {
     private AccountDAO accountDAO;
 
@@ -16,25 +15,24 @@ public class AccountService {
     }
 
     public Account addAccount(Account account) {
-        if (accountDAO.getAccountbyId(account.getAccount_id())) {
+        // return null if the username already exists
+        if (accountDAO.getAccountByUserName(account.getUsername())) {
             return null;
         }
-        else if ((account.getUsername() != null) && (account.getPassword().length() >= 4)) {
-            return accountDAO.insertAccount(account);
-        }
+        // controller class checks not null input and valid password
+        return accountDAO.insertAccount(account);
     }
 
     public Account verifyLogin(Account login) {
         Account account = accountDAO.getAccountByUserName(login.getUsername());
+        // check if username exists and password is valid
         if (account != null && account.getPassword().equals(login.getPassword())) {
-        return account;
+            return account;
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
-    public Account getAccountId(int posted_by_id) {
+    public Account getAccountById(int posted_by_id) {
         return accountDAO.getAccountById(posted_by_id);
     }
 

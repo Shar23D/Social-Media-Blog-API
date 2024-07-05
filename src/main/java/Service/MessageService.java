@@ -15,9 +15,11 @@ public class MessageService {
         this.messageDAO = messageDAO;
     }
 
-    public Message addMessage() {
-        
-        return Message;
+    public Message addMessage(int accountId, String messageText) {
+        Message message = new Message();
+        message.setPosted_by(accountId);
+        message.setMessage_text(messageText);
+        return message;
     }
 
     public List<Message> getAllMessages() {
