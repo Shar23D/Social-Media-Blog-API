@@ -71,7 +71,7 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
         Account login = accountService.verifyLogin(account);
-        if (login != null && (addedAccount.getPassword().length() >= 4)) {
+        if (login != null && (login.getPassword().length() >= 4)) {
             context.json(mapper.writeValueAsString(login));
             context.status(200);
         }
