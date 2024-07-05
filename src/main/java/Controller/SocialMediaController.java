@@ -54,7 +54,7 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(context.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
-        if (addedAccount != null) {
+        if (addedAccount != null && addedAccount.password.length() >= 4) {
             context.json(mapper.writeValueAsString(addedAccount));
         }
         else {
@@ -78,7 +78,7 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
         Message addedMessage = messageService.addMessage(message);
-        if (addedMessage != null) {
+        if (addedMessage != null && addedMessage.message_text.length() <= 255) {
             context.json(mapper.writeValueAsString(addedMessage));
         }
         else {
@@ -91,9 +91,10 @@ public class SocialMediaController {
         context.json(messages);
     }
 
-    private void getAMessageHandler(Context context) {
-        List<Message> messages = messageService.getAllMessages();
-        context.json(messages);
+    private void getAMessageHandler(Context context, int message_id) {
+        context.pathParam("message_id");
+        Message message = messageService.GetAMessageById();
+        context.json(message);
     }
     
 
