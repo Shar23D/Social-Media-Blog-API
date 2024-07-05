@@ -15,9 +15,11 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 /**
- * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
+ * TODO: You will need to write your own endpoints and handlers for your
+ * controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should
- * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
+ * refer to prior mini-project labs and lecture materials for guidance on how a
+ * controller may be built.
  */
 public class SocialMediaController {
     AccountService accountService;
@@ -27,10 +29,14 @@ public class SocialMediaController {
         this.accountService = new AccountService();
         this.messageService = new MessageService();
     }
+
     /**
-     * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
+     * In order for the test cases to work, you will need to write the endpoints in
+     * the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
-     * @return a Javalin app object which defines the behavior of the Javalin controller.
+     * 
+     * @return a Javalin app object which defines the behavior of the Javalin
+     *         controller.
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
@@ -48,7 +54,9 @@ public class SocialMediaController {
 
     /**
      * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * 
+     * @param context The Javalin Context object manages information about both the
+     *                HTTP request and response.
      */
     private void exampleHandler(Context context) {
         context.json("sample text");
@@ -60,9 +68,7 @@ public class SocialMediaController {
         Account addedAccount = accountService.addAccount(account);
         if (addedAccount != null && (addedAccount.getPassword().length() >= 4)) {
             context.json(mapper.writeValueAsString(addedAccount));
-            context.status(200);
-        }
-        else {
+        } else {
             context.status(400);
         }
     }
@@ -73,23 +79,19 @@ public class SocialMediaController {
         Account login = accountService.verifyLogin(account);
         if (login != null && (login.getPassword().length() >= 4)) {
             context.json(mapper.writeValueAsString(login));
-            context.status(200);
-        }
-        else {
+        } else {
             context.status(401);
         }
     }
 
     private void addMessageHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        Message message = mapper.readValue(context.body(),Message.class);
+        Message message = mapper.readValue(context.body(), Message.class);
         Account account = accountService.getAccountById(message.getPosted_by());
         Message addedMessage = messageService.addMessage(account.getAccount_id(), message.getMessage_text());
         if (addedMessage != null && account != null && (addedMessage.getMessage_text().length() < 255)) {
             context.json(mapper.writeValueAsString(addedMessage));
-            context.status(200);
-        }
-        else {
+        } else {
             context.status(400);
         }
     }
@@ -97,33 +99,38 @@ public class SocialMediaController {
     private void getAllMessagesHandler(Context context) {
         List<Message> messages = messageService.getAllMessages();
         context.json(messages);
-        context.status(200);
     }
 
     private void getMessageByIdHandler(Context context) {
         int messageId = Integer.parseInt(Objects.requireNonNull(context.pathParam("message_id")));
         Message message = messageService.GetMessageById(messageId);
-        context.json(message);
-        context.status(200);
+        if (message != null) {
+            context.json(message);
+        }
+        else {
+            context.json("{}");
+        }
     }
-    
+
     private void deleteMessageByIdHandler(Context context) {
         int messageId = Integer.parseInt(Objects.requireNonNull(context.pathParam("message_id")));
         Message message = messageService.deleteMessageById(messageId);
-        context.json(message);
-        context.status(200);
+        if (message != null) {
+            context.json(message);
+        }
+        else {
+            context.json("{}");
+        }
     }
 
     private void updateMessageHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
         int messageId = Integer.parseInt(Objects.requireNonNull(context.pathParam("message_id")));
-        Message updatedMessage = messageService.updateMessage(messageId, message);
+        Message updatedMessage = messageService.updateMessageById(messageId, message.getMessage_text());
         if (updatedMessage != null && (updatedMessage.getMessage_text().length() < 255)) {
             context.json(mapper.writeValueAsString(updatedMessage));
-            context.status(200);
-        }
-        else {
+        } else {
             context.status(400);
         }
     }
@@ -134,13 +141,7 @@ public class SocialMediaController {
         if (account != null) {
             List<Message> messages = messageService.getAllMessagesbyAccountId(accountId);
             context.json(messages);
-            context.status(200);
-
         }
     }
-
-
-
-
 
 }

@@ -16,17 +16,26 @@ public class MessageService {
     }
 
     public Message addMessage(int accountId, String messageText) {
-        Message message = new Message();
-        message.setPosted_by(accountId);
-        message.setMessage_text(messageText);
-        return message;
+        return messageDAO.insertMessage(accountID, messageText);
     }
 
     public List<Message> getAllMessages() {
-
-        return ;
+        return messageDAO.getAllMessages();
     }
 
+    public Message getMessageById(int messageId) {
+        return messageDAO.getMessageById(messageId);
+    }
 
-
+    public Message deleteMessageById(int messageId) {
+        return messageDAO.deleteMessageById(messageId);
+    }
+    
+    public Message updateMessageById(int messageId, String message) {
+        return messageDAO.updateMessageById(messageId, message);
+    }
+    
+    public List<Message> getAllMessagesbyAccountId(int accountId) {
+        return messageDAO.getAllMessagesbyAccountId(accountId);
+    }
 }
