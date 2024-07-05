@@ -15,7 +15,7 @@ public class AccountService {
         this.accountDAO = accountDAO;
     }
 
-    public Account addAccount (Account account) {
+    public Account addAccount(Account account) {
         if (accountDAO.getAccountbyId(account.getAccount_id() != null)) {
             return null;
         }
@@ -23,4 +23,20 @@ public class AccountService {
             return accountDAO.insertAccount(account);
         }
     }
+
+    public Account verifyLogin(Account login) {
+        Account account = accountDAO.getAccountByUserName(login.getUsername());
+        if (account != null && account.getPassword().equals(login.getPassword())) {
+        return account;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public Account getAccountId(int posted_by_id) {
+        return accountDAO.getAccountById(posted_by_id);
+    }
+
+
 }
