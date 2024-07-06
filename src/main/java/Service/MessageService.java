@@ -15,8 +15,8 @@ public class MessageService {
         this.messageDAO = messageDAO;
     }
 
-    public Message addMessage(int accountId, String messageText) {
-        return messageDAO.insertMessage(accountID, messageText);
+    public Message addMessage(Message message) {
+        return messageDAO.insertMessage(message);
     }
 
     public List<Message> getAllMessages() {

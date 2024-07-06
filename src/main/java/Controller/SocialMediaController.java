@@ -135,7 +135,7 @@ public class SocialMediaController {
         }
     }
 
-    private void getAllMessagesByAcountIdHandler(Context context) {
+    private void getAllMessagesByAccountIdHandler(Context context) {
         int accountId = Integer.parseInt(Objects.requireNonNull(context.pathParam("account_id")));
         Account account = accountService.getAccountById(accountId);
         if (account != null) {
