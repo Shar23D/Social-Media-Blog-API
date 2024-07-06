@@ -16,7 +16,7 @@ public class AccountService {
 
     public Account addAccount(Account account) {
         // return null if the username already exists
-        if (accountDAO.getAccountByUserName(account.getUsername())) {
+        if (accountDAO.getAccountByUsername(account.getUsername()) != null) {
             return null;
         }
         // controller class checks not null input and valid password
@@ -24,7 +24,7 @@ public class AccountService {
     }
 
     public Account verifyLogin(Account login) {
-        Account account = accountDAO.getAccountByUserName(login.getUsername());
+        Account account = accountDAO.getAccountByUsername(login.getUsername());
         // check if username exists and password is valid
         if (account != null && account.getPassword().equals(login.getPassword())) {
             return account;
