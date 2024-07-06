@@ -15,7 +15,7 @@ public class MessageService {
         this.messageDAO = messageDAO;
     }
 
-    public Message addMessage(Message message) {
+    public Message addMessage(Message message) {          
         return messageDAO.insertMessage(message);
     }
 

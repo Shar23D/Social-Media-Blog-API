@@ -50,6 +50,7 @@ public class SocialMediaController {
         app.patch("/messages/{message_id}", this::updateMessageHandler);
         app.get("/accounts/{account_id}/messages", this::getAllMessagesByAccountIdHandler);
         app.start(8080);
+        return app;
     }
 
     /**
@@ -87,9 +88,9 @@ public class SocialMediaController {
     private void addMessageHandler(Context context) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(context.body(), Message.class);
+        Message addedMessage = messageService.addMessage(message);
         Account account = accountService.getAccountById(message.getPosted_by());
-        Message addedMessage = messageService.addMessage(account.getAccount_id(), message.getMessage_text());
-        if (addedMessage != null && account != null && (addedMessage.getMessage_text().length() < 255)) {
+        if (account != null && (addedMessage.getMessage_text().length() < 255)) {
             context.json(mapper.writeValueAsString(addedMessage));
         } else {
             context.status(400);
@@ -103,24 +104,16 @@ public class SocialMediaController {
 
     private void getMessageByIdHandler(Context context) {
         int messageId = Integer.parseInt(Objects.requireNonNull(context.pathParam("message_id")));
-        Message message = messageService.GetMessageById(messageId);
-        if (message != null) {
-            context.json(message);
-        }
-        else {
-            context.json("{}");
-        }
+        Message message = messageService.getMessageById(messageId);
+        context.json(message);
+
     }
 
     private void deleteMessageByIdHandler(Context context) {
         int messageId = Integer.parseInt(Objects.requireNonNull(context.pathParam("message_id")));
         Message message = messageService.deleteMessageById(messageId);
-        if (message != null) {
-            context.json(message);
-        }
-        else {
-            context.json("{}");
-        }
+        context.json(message);
+
     }
 
     private void updateMessageHandler(Context context) throws JsonProcessingException {
@@ -144,4 +137,8 @@ public class SocialMediaController {
         }
     }
 
+    public void stopAPI(Javalin app) {
+        app.stop();
+
+    }
 }
