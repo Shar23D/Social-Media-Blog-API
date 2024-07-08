@@ -148,9 +148,7 @@ public class SocialMediaController {
             List<Message> messages = messageService.getAllMessagesbyAccountId(accountId);
             if (!messages.isEmpty()) {
                 context.json(messages);
-            } else {
-                context.json(new ArrayList<>());
-            }
+            } 
         }
         else {
             context.json(new ArrayList<>());
