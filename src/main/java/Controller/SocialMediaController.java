@@ -152,6 +152,9 @@ public class SocialMediaController {
                 context.json(new ArrayList<>());
             }
         }
+        else {
+            context.json(new ArrayList<>());
+        }
     }
 
     public void stopAPI(Javalin app) {
